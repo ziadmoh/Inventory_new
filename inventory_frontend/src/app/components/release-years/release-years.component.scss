@@ -1,0 +1,82 @@
+.page-header{
+    
+    h4{
+        font-family: 'TheSans', sans-serif;
+    }
+}
+::ng-deep{
+    .p-submenu-header{
+        text-align: right;
+    }
+    .p-datatable-table{
+        .p-datatable-thead{
+            tr{
+                th {text-align: right; direction: rtl;}
+
+            }
+
+        }
+        .p-datatable-tbody{
+            tr{
+                td{text-align: right; direction: rtl;}
+
+            }
+        }
+        
+    }
+
+    .p-menuitem-icon{
+        margin-left:.5rem ;
+        margin-right: .5rem;
+    }
+    .p-dialog-footer{
+        .p-button-icon{
+            margin-left: 0.5rem;
+            margin-right: 0;
+        }
+    }
+    .toast-title{
+        font-size: 20px;
+        font-weight: 500;
+    }
+    .p-dropdown.p-component{
+        width: 100%;
+        text-align: right;
+    }
+    .p-multiselect.p-component{
+        width: 100%;
+        text-align: right;
+    }
+    .p-element.p-inputwrapper{
+        width: 100%;
+    }
+    .p-dropdown {
+        .p-dropdown-clear-icon{
+            left: 3rem;
+            right: auto;
+        }
+    }
+    .p-multiselect-panel .p-multiselect-items .p-multiselect-item .p-checkbox{
+        margin-left: .5rem;
+        margin-right: 0;
+    }
+    .p-multiselect-panel .p-multiselect-header .p-checkbox{
+        margin-left: .5rem;
+        margin-right: 0;
+    }
+
+}
+.actions-cell{
+    width: 90px;
+    
+}
+.rmv-desc{
+    font-size: 17px;
+    font-weight: 600;
+}
+.transparent-bkg{
+    background-color: #F5F7FC;
+}
+.filter-container{
+    width: 250px;
+}

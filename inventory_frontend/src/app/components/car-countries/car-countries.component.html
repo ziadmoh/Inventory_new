@@ -1,0 +1,83 @@
+<!--Page Header -->
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>بلاد المنشأ للسيارة</h4>
+    <p-button label="اضافة بلد" (click)="showAddDialog()"  styleClass="p-button-sm"></p-button>
+</div>
+<!-- List section -->
+<main class="my-3">
+    <p-table dir="rtl"  responsiveLayout="scroll" [value]="carCountries" [paginator]="true" [rows]="10" [totalRecords]="carCountries.length">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>البلد </th>
+                <th>الاجرائات</th>
+                <!-- <th></th> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-country let-columns="columns">
+            <tr>
+                <td>{{country.country}}</td>
+                <td class="actions-cell">
+                    <!-- <i class="fa-solid fa-ellipsis" (click)="menu.toggle($event)"></i> -->
+                    
+
+                    <button type="button" pButton icon="pi pi-bars" label="" (click)="selectedItem = country;menu.toggle($event)"></button>
+                    
+                </td>
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="carCountries.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{carCountries ? carCountries.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>
+<!-- Actions menu -->
+<p-menu #menu [popup]="true" [model]="actionList" appendTo="body"></p-menu>
+<!-- Add modal -->
+<p-dialog header="اضافة بلد" [(visible)]="visibleAddDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+    <form [formGroup]="newCountryForm" (ngSubmit)="onAddCountry()">
+        <div class="form-group my-4">
+            <input placeholder="اسم البد" class="form-control" formControlName="countryName">
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onAddCountry()" label="اضافة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+<!-- Archive modal -->
+<p-dialog [header]="'ارشفة '+ selectedItem.country " [(visible)]="visibleArchiveDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل انت متأكد انك تريد مسح هذا العنصر ؟ </p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onArchiveCountry()" label="ارشفة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete modal -->
+<p-dialog [header]="'حذف '+ selectedItem.country " [(visible)]="visibledeleteDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> سيتم حذف جميع المنتجات التابعة لهذة البلد , هل انت متأكد؟</p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onDeleteCountry()" label="حذف" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+update modal 
+ <p-dialog [header]="'تعديل '+ selectedItem.country " [(visible)]="visibleUpdateDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+    <form [formGroup]="updateCountryForm" >
+        <div class="form-group my-4">
+            <input placeholder="اسم البد" class="form-control" formControlName="countryName">
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onUpdateCountry()" label="حفظ" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>

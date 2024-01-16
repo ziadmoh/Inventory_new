@@ -1,0 +1,138 @@
+<!--Page Header -->
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>المستخدمين</h4>
+    <p-button label="اضافة مستخدم" (click)="showAddDialog()"  styleClass="p-button-sm"></p-button>
+</div>
+<!-- List section -->
+<main class="my-3">
+    <p-table dir="rtl"  
+   
+    responsiveLayout="scroll"
+    [value]="systemUsers" 
+    [paginator]="true" 
+    [rows]="10" 
+    [totalRecords]="systemUsers.length">
+        <ng-template pTemplate="caption">
+            <div class="table-header text-right">
+                 تصفية حسب الدور
+                <span class="p-input-icon-left mx-3 filter-container">
+                    <p-dropdown [showClear]="true" (onChange)="filterByUserType($event)" 
+                    (onClear)="cancelFilter1()"  appendTo="body" placeholder="الدور" 
+                    [options]="userTypes" [(ngModel)]="selectedFilterItem" 
+                    optionLabel="arName"
+                    ></p-dropdown>
+                </span>
+            </div>
+        </ng-template>    
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>الاسم</th>
+                <th>الدور</th>
+                <th>اسم المستخدم</th>
+                <th>الهاتف </th>
+                <th>الايميل </th>
+                <th>تاريخ الاضافة </th>
+                <!-- <th>كلمة السر </th> -->
+                <th>الاجرائات</th>
+                <!-- <th></th> -->
+            </tr>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" pTemplate="body" let-user let-columns="columns"
+        let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr>
+                
+                <td>{{user.fullName}}</td>
+                <td>{{user.type}}</td>
+                <td>{{user.userName}}</td>
+                <td>{{user.phone}}</td>
+                <td>{{user.email}}</td>
+                <td style="direction: ltr;">{{user.joinDate | date:'dd-MM-YYYY'}} {{user.joinDate | date:'hh:mm a'}}
+                    
+                </td>
+                <td class="actions-cell">
+                    <!-- <i class="fa-solid fa-ellipsis" (click)="menu.toggle($event)"></i> -->
+                    
+
+                    <button type="button" pButton icon="pi pi-bars" label="" (click)="selectedItem = user;menu.toggle($event)"></button>
+                    
+                </td>
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="systemUsers.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{systemUsers ? systemUsers.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>
+<!-- Actions menu -->
+<p-menu #menu [popup]="true" [model]="actionList" appendTo="body"></p-menu>
+<!-- Add modal -->
+<p-dialog [dismissableMask]="true"  #addDialog header="اضافة مستخدم" [(visible)]="visibleAddDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+    <form class="my-4" [formGroup]="newUserForm" (ngSubmit)="onAddUser()">
+        
+        <div class="form-group my-4">
+            <input type="text" placeholder="الاسم بالكامل" class="form-control py-4" formControlName="fullName">
+        </div>
+        <div class="form-group my-4">
+            <input type="text" placeholder="اسم المستخدم" class="form-control py-4" formControlName="userName">
+        </div>
+        <div class="form-group my-4">
+            <input type="email" placeholder="الايميل" class="form-control py-4 text-right" formControlName="email">
+        </div>
+        <div class="form-group my-4">
+            <input type="password" placeholder="كلمة السر" class="form-control py-4" formControlName="password">
+        </div>
+        <div class="form-group my-4">
+            <input type="tel" placeholder="الهاتف" class="form-control py-4 text-right" formControlName="phone">
+        </div>
+        <div class="form-group d-flex flex-row my-4">
+            <p-dropdown appendTo="body" placeholder="الدور" [options]="userTypes" formControlName="type" optionLabel="arName"></p-dropdown>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onAddUser()" label="اضافة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Update modal -->
+<!-- <p-dialog [dismissableMask]="true"  #addDialog [header]=" 'تعديل '+ selectedItem.model " [(visible)]="visibleUpdateDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+    <form class="my-4" [formGroup]="newUserForm" (ngSubmit)="onUpdateModel()">
+        <div class="form-group d-flex flex-row my-4">
+            <p-dropdown appendTo="body" placeholder="بلد المنشأ" [options]="carBrands" formControlName="brand" optionLabel="brand"></p-dropdown>
+        </div>
+        <div class="form-group my-4">
+            <input placeholder="اسم الموديل" class="form-control py-4" formControlName="modelName">
+        </div>
+        
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onUpdateModel()" label="حفظ" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog> -->
+<!-- Archive modal -->
+<p-dialog [dismissableMask]="true"  [header]="'ارشفة '+ selectedItem.fullName " [(visible)]="visibleArchiveDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل انت متاكد انك تريد مسح هذا المستخدم؟</p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onArchiveUser()" label="ارشفة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete modal -->
+<p-dialog [dismissableMask]="true"  [header]="'حذف '+ selectedItem.fullName " [(visible)]="visibledeleteDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> سيتم حذف هذا المستخدم للابد  , هل انت متأكد؟</p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onDeleteUser()" label="حذف" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+

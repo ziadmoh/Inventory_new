@@ -1,0 +1,54 @@
+.page-header{
+    
+    h4{
+        font-family: 'TheSans', sans-serif;
+    }
+}
+::ng-deep{
+    .p-submenu-header{
+        text-align: right;
+    }
+    .p-datatable-table{
+        .p-datatable-thead{
+            tr{
+                th {text-align: right; direction: rtl;}
+
+            }
+
+        }
+        .p-datatable-tbody{
+            tr{
+                td{text-align: right; direction: rtl;}
+
+            }
+        }
+        
+    }
+
+    .p-menuitem-icon{
+        margin-left:.5rem ;
+        margin-right: .5rem;
+    }
+    .p-dialog-footer{
+        .p-button-icon{
+            margin-left: 0.5rem;
+            margin-right: 0;
+        }
+    }
+    .toast-title{
+        font-size: 20px;
+        font-weight: 500;
+    }
+    
+}
+.actions-cell{
+    width: 90px;
+    
+}
+.rmv-desc{
+    font-size: 17px;
+    font-weight: 600;
+}
+.transparent-bkg{
+    background-color: #F5F7FC;
+}

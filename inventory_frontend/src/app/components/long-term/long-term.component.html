@@ -1,0 +1,202 @@
+<!--Page Header -->
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>الشغل الاجل</h4>
+</div>
+<!-- List section -->
+<main class="my-3">
+
+    <p-table [value]="companiesInvoices" 
+        sortMode="single" dataKey="companyName" rowGroupMode="subheader"
+        groupRowsBy="companyName"
+        [paginator]="true" 
+        #longTermData
+        [rows]="10" 
+        [totalRecords]="companiesInvoices.length"
+        [globalFilterFields]="['companyName']">
+        <ng-template pTemplate="caption">
+            <div class="table-header text-right d-flex flex-row justify-content-between">
+                <span class="p-input-icon-left my-2 filter-container">
+                    
+                        <input [(ngModel)]="searchFilter" class="form-control" pInputText type="text" (input)="applyFilterGlobal($event)" placeholder="ابحث باسم الشركة" />
+                </span>
+                <button pButton label="مسح البحث" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clearCompaniesSearch()"></button>
+            </div>
+        </ng-template> 
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:25%">الشركة</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="groupheader" let-company
+            let-rowIndex="rowIndex" let-expanded="expanded">
+            <tr>
+                <td colspan="5">
+                    <div class="d-flex flex-row align-items-center">
+                    <button type="button" pButton pRipple
+                        [pRowToggler]="company" class="p-button-text
+                        p-button-rounded p-button-plain " [icon]="expanded ?
+                        'pi pi-chevron-down' : 'pi pi-chevron-left'"></button>
+                    <strong class="font-bold ml-2">{{company.companyName}}</strong>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-company>
+
+
+            <p-table styleClass="invoices-table" [value]="company.invoices"
+                sortField="addedAt"
+                sortMode="single" dataKey="invoiceId" rowGroupMode="subheader"
+                groupRowsBy="invoiceId"
+                #invoiceData
+                [globalFilterFields]="['invoiceId']">
+                <ng-template pTemplate="caption">
+                    <div class="table-header text-right d-flex flex-row justify-content-between mx-5">
+                        <span class="p-input-icon-left my-2 filter-container">
+                            
+                                <input  class="form-control" pInputText type="text" (input)="applyInvoiceFilterGlobal(invoiceData,$event, 'contains')" placeholder="ابحث برقم الفاتورة" />
+                        </span>
+                        <button pButton label="مسح البحث" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clearInvoiceFilter(invoiceData)"></button>
+                    </div>
+                </ng-template> 
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:25%;padding-right:50px">الرقم التعريفي</th>
+                        <th style="width:25%"> المبلغ المدفوع</th>
+                        <th style="width:25%;padding-left:20px">تاريخ الدفع</th>
+                        <!-- <th style="width:25%"> الحالة</th> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="groupheader" let-invoice
+                    let-rowIndex="rowIndex" let-expanded="expanded">
+                    <tr>
+                        <td colspan="5">
+                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                <div class="d-flex flex-row align-items-center">
+                                    <button type="button" pButton pRipple
+                                        [pRowToggler]="invoice" class="p-button-text
+                                        p-button-rounded p-button-plain mr-2"
+                                        [icon]="expanded ?
+                                        'pi pi-chevron-down' : 'pi pi-chevron-left'"></button>
+                                    <h6 class="font-bold ml-2"> 
+                                      <span class="badge badge-primary m-3">
+                                          {{invoice.invoiceId}} 
+                                      </span> 
+                                      <span class="badge badge-success" *ngIf="invoice.done == 1">
+                                        خالصة
+                                      </span> 
+                                      <span class="badge badge-danger" *ngIf="invoice.done == 0">
+                                        لم تنتهي بعد
+                                      </span><br>
+                                       <span>
+                                        اجمالي {{invoice.totalFees}} جنية
+                                       </span>  <br>
+                                       <div class=" d-flex flex-row my-3" >
+                                            
+                                          <span class="pl-2"> بتاريخ </span>
+                                         <div style="direction: ltr;">
+                                            {{invoice.creationDate |
+                                                date:'dd-MM-YYYY'}} {{invoice.creationDate |
+                                                date:'hh:mm a'}} 
+                                         </div>
+                                       </div> <br>
+                                       <span class="my-3">
+                                        متبقي {{invoice.totalFees -
+                                            invoice.recievedFees}} جنية
+                                       </span>  
+                                        
+                                    </h6>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <button class="my-2" [disabled]="invoice.done == 1"  type="button" pButton label="ادخال دفعة" (click)="showAddPaymentDialog(invoice)"></button>
+                                    <button class="my-2 btn-warning" [disabled]="!invoice.orderItems.length"  type="button" pButton label=" استرجاع عناصر" (click)="showReturnItemsDialog(invoice)"></button>
+                               
+                                </div>
+                               </div>
+                            
+
+                        </td>
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-invoice>
+                    <tr *ngFor="let payment of invoice.payments">
+                        <td style="padding-right:100px">
+                            {{payment.processId}}
+                        </td>
+                        <td style="direction: ltr;">
+                            <strong> {{payment.deposite}}</strong> /
+                            {{invoice.totalFees}}
+                        </td>
+                        <td style="direction: ltr;padding-left:100px">
+                            {{payment.addedAt | date:'dd-MM-YYYY'}}
+                            {{payment.addedAt | date:'hh:mm a'}}</td>
+
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <!-- {{invoice.payments[0].deposite}} -->
+                    <tr>
+                        <td class="transparent-bkg"
+                            [attr.colspan]="company.invoices.length">
+                            لا توجد بيانات بعد
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg"
+                    [attr.colspan]="companiesInvoices.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</main>
+
+<!-- Add payment modal -->
+<p-dialog [dismissableMask]="true"  [header]="'ادخال دفعة من فاتورة '+ selectedInvoice.invoiceId" [(visible)]="visiblePaymentDialog" [modal]="true" [draggable]="false" [style]="{width: '30vw'}">
+    <form class="" [formGroup]="newPaymentForm" (ngSubmit)="addPayment()">
+        <div class="row my-2">
+            <div class="form-group my-2 col-12">
+                <input type="number" placeholder="ثمن الدفعة" formControlName="deposite" class="form-control">
+            </div>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="addPayment()" label="ادخال" styleClass="p-button-text"></p-button>
+    </ng-template>
+    
+</p-dialog>
+<!-- return items modal -->
+<p-dialog [dismissableMask]="true"  [header]="'استرجاع عناصر من فاتورة '+ selectedInvoice.invoiceId " [(visible)]="visibleReturnDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+    <div class="" >
+        <h6 class="d-flex text-right mb-4">  {{selectedInvoice.creationDate |date:'dd-MM-YYYY'}}</h6>
+        <h4 *ngIf="isAllReturned.length" class="d-flex text-right"> اختار العناصر المراد استرجاعها</h4>
+        <h4 *ngIf="!isAllReturned.length" class="d-flex text-right"> لا توجد عناصر او جميع العناصر تم استرجاعها مسبقا</h4>
+        
+        <div  *ngFor="let item of selectedInvoice.orderItems;let i = index">
+            <div *ngIf="item.isReturned == 0" class="d-flex flex-row py-3 invoice-item ">
+                <p-checkbox styleClass="ml-2" name="invoiceItems" [value]="item" [(ngModel)]="numberOfInvoceItems[i]" (onChange)="onSelectInvoiceItem($event,i)"></p-checkbox>
+                <div class="d-flex flex-column">
+                    <h6>{{item.product.productName + ' ' + item.product.manufacturerCountery }}</h6>
+                    <h6>الكمية : {{item.quantity}}</h6> 
+                    <h6>السعر : {{item.fee}} جنية</h6> 
+                    
+                    
+                </div>
+            </div>
+
+            
+            
+
+        </div>
+    </div>
+    <ng-template pTemplate="footer" >
+        <p-button *ngIf="isAllReturned.length" icon="pi pi-check" (click)="returnItems()" label="استرجاع" styleClass="p-button-text"></p-button>
+    </ng-template>
+    
+</p-dialog>

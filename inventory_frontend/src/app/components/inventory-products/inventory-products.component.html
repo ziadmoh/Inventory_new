@@ -1,0 +1,455 @@
+<!--Page Header -->
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4 *ngIf="selectedStorage.storageId == 0">جميع المخازن</h4>
+    <h4 *ngIf="selectedStorage.storageId != 0">{{selectedStorage.storageName}}</h4>
+    <div class="d-flex flex-row align-items-center">
+        <p-button *ngIf="isAdmin" label="اضافة منتج جديد" (click)="showAddDialog()"  styleClass="p-button-sm "></p-button>
+        <p-button [disabled]="!selectedProducts.length" *ngIf="isAdmin" label="مسح متعدد" (click)="showMultipleArchiveDialog()"  styleClass="p-button-sm my-2 mx-2 btn-danger"></p-button>
+        <p-button label="تصفية" (click)="isFiltersDialogVisisble = true"  styleClass="p-button-sm btn-warning"></p-button>
+         
+    </div>
+</div>
+
+
+<!-- List section -->
+<main class="my-3">
+    <p-table dir="rtl"  
+    [loading]="isProductsLoading"
+    [lazy]="true"
+    (onLazyLoad)="loadData($event)"
+    #productData
+    responsiveLayout="scroll"
+    [value]="supplyProducts" 
+    [globalFilterFields]="['productNameWithCountry']"
+    [paginator]="true" 
+    [rows]="10" 
+    [totalRecords]="paginationOptions.totalRecords"
+    [(selection)]="selectedProducts"
+    [selectionPageOnly]="true">
+    <ng-template pTemplate="caption">
+        <div class="table-header text-right d-flex flex-row justify-content-between">
+            <span class="p-input-icon-left my-2 filter-container">
+                
+                    <input  class="form-control" pInputText type="text" [(ngModel)]="searchFilter" 
+                    (input)="applyFilterGlobal($event)" placeholder="ابحث باسم السلعة او الباركود" 
+                    [disabled]="selectedFilterItem3 || selectedFilterItem4" />
+            </span>
+            <div>
+                <!-- <button pButton label="طباعة الباركود" class="p-button-success mx-2" (click)="onPrintStickers()"></button> -->
+                <button pButton label="مسح البحث" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clearSearch()"></button>
+            </div>
+            
+        </div>
+       
+        
+    </ng-template> 
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th style="width: 4rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th>باركود</th>
+                <th >السلعة</th>
+
+                <th>السيارة</th>
+                <th>السنة</th>
+                <th>سعر البيع للقطعة</th>
+                <th>تاريخ الاضافة </th>
+                <!-- <th>تاريخ اخر تعديل</th> -->
+                <th>الكمية في المخزن </th>
+                <!-- <th>المورد</th> -->
+                <th *ngIf="isAdmin">الاجرائات</th>
+                <!-- <th></th> -->
+            </tr>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" pTemplate="body" let-supplyProduct let-columns="columns"
+        let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="supplyProduct"></p-tableCheckbox>
+                </td>
+                <td><strong [ngClass]="supplyProduct.quantity <= supplyProduct.criticalQuantity ? 'text-danger' : ''"> {{supplyProduct.barcode?supplyProduct.barcode : '-'}}</strong></td>
+                <td >
+                    <span class="d-flex flex-row align-items-center">
+                       <span style="width: 150px;"  [ngClass]="supplyProduct.quantity <= supplyProduct.criticalQuantity ? 'text-danger font-weight-bold' : ''"> {{supplyProduct.productNameWithCountry}} </span>
+                        <div class="mx-2 d-flex flex-row justify-content-start ">
+                            <input [(ngModel)]="supplyProduct.toInvoiceQuantity" type="number" class="form-control selected-quant-input">
+                            <button class="btn btn-success  add-to-inv" (click)="setItemSelection(supplyProduct,rowIndex);addToInvoice()">اضافة</button>
+                        </div>
+                    </span>
+                    
+                </td>
+                <td>{{supplyProduct.carBrand && supplyProduct.carModel? supplyProduct.carBrand.brand + ' ' + supplyProduct.carModel.model
+                    : '-'}}</td>
+                <td>{{supplyProduct.releaseYear?supplyProduct.releaseYear.year : '-'}}</td>
+                <td>{{supplyProduct.piecePrice}} جنية</td>
+                <td style="direction: ltr;"> {{supplyProduct.addedAt | date:'dd-MM-YYYY'}} <br> {{supplyProduct.addedAt | date:'hh:mm a'}}</td>
+                <!-- <td style="direction: ltr;"> {{supplyProduct.modifiedAt | date:'dd-MM-YYYY'}} {{supplyProduct.modifiedAt | date:'hh:mm a'}}</td> -->
+                <td><strong [ngClass]="supplyProduct.quantity <= supplyProduct.criticalQuantity ? 'text-danger' : ''">{{supplyProduct.quantity}}</strong> </td>
+
+                <!-- <td><strong>{{supplyProduct.supplier.companyName}}</strong> </td> -->
+                <td class="actions-cell" *ngIf="isAdmin">
+                    <!-- <i class="fa-solid fa-ellipsis" (click)="menu.toggle($event)"></i> -->
+                    
+
+                    <button   type="button" pButton icon="pi pi-bars" label="" (click)="setItemSelection(supplyProduct,rowIndex);menu.toggle($event)"></button>
+                    
+                </td>
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="supplyProducts.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{supplyProducts ? supplyProducts.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>
+<!-- Actions menu -->
+<p-menu #menu [popup]="true" [model]="actionList" appendTo="body" ></p-menu>
+<!-- Add modal -->
+<p-dialog [dismissableMask]="false"  #addDialog header="اضافة سلعة" [(visible)]="visibleAddDialog" [modal]="true" [draggable]="false" [style]="{width: '75vw'}">
+    <form class="" [formGroup]="newProductForm" (ngSubmit)="onAddSupplyProduct()">
+        <div class="row my-3">
+            <h5 class="d-flex">بيانات اساسية</h5>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">اسم السلعة</h6>
+                <input type="text"  formControlName="productName" class="form-control">
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">الكمية</h6>
+                <input type="number" formControlName="quantity" class="form-control">
+            </div>
+            
+            
+            <div class="form-group my-2 col-md-6">
+               <h6 class="d-flex text-right">سعر الشراء للقطعة</h6>
+                <input type="number"  formControlName="piecePurchasePrice" class="form-control">
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> سعر البيع للقطعة</h6>
+                <input type="number"  formControlName="piecePrice" class="form-control">
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> التصنيف</h6>
+                <p-dropdown appendTo="body" placeholder="التصنيف" [options]="supplyNames" formControlName="supplyName" optionLabel="supply"
+                [filter]="true" filterBy="supply"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> بلد القطعة </h6>
+                <p-dropdown appendTo="body" placeholder="بلد القطعة " [options]="supplyCountries" formControlName="manufacturerCountery" optionLabel="country"
+                [filter]="true" filterBy="country"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> اقل كمية للنواقص</h6>
+                <input type="number" formControlName="criticalQuantity" class="form-control">
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">الاسم المختصر</h6>
+                <input type="text"  formControlName="shortName" class="form-control">
+            </div>
+            
+        </div>
+        <hr>
+        <div class="row my-3">
+            <h5 class="d-flex">اختر المخازن المراد وضع السلعة بها </h5>
+            
+            <div class="form-group my-2 col-md-12">
+                <p-multiSelect appendTo="body" (onChange)="setProductStorages($event)" [options]="storages" defaultLabel="توزيع الكمية على" optionLabel="storageName" selectedItemsLabel="{0} مخازن"
+                formControlName="productStoragesValues"></p-multiSelect>
+                
+                <div class="row" formArrayName="productStoragesArr">
+                    <div class="col-3 my-2" *ngFor="let st of getProductStoragesArr().controls; let i = index">
+                        <div class="form-group" [formGroupName]="i">
+                            <h6 class="text-right">{{getProductStoragesArr().controls[i].value.storageName}}</h6>
+                            <input type="number" placeholder="الكمية" formControlName="quantity" class="form-control">
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+            
+        </div>
+        <hr>
+        <div class="row my-3">
+            <h5 class="d-flex">بيانات اضافية</h5>
+            
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> السيارة</h6>
+                <p-dropdown appendTo="body" placeholder="السيارة" [options]="supplyBrands" formControlName="carBrand" optionLabel="brand"
+                [filter]="true" filterBy="brand" (onChange)="onChangeBrand($event)" [showClear]="true"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+               <h6 class="d-flex text-right"> الموديل</h6>
+                <p-dropdown appendTo="body" placeholder="الموديل" [options]="filteredSupplyModels" formControlName="carModel" optionLabel="model"
+                [filter]="true" filterBy="model"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">السنة </h6>
+                <p-dropdown appendTo="body" placeholder="السنة" [options]="supplyReleaseYears" formControlName="releaseYear" optionLabel="year"
+                [filter]="true" filterBy="year"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> المورد</h6>
+                <p-dropdown appendTo="body" placeholder="المورد" [options]="suppliers" formControlName="supplier" optionLabel="companyName"
+                ></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-12">
+                <h6 class="d-flex text-right">الوصف</h6>
+                <textarea placeholder="الوصف" formControlName="productDescription" class="form-control" rows="4"></textarea>
+                <hr class="mt-3">
+            </div>
+           
+        </div>
+        
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onAddSupplyProduct()" label="اضافة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Archive modal -->
+<p-dialog [dismissableMask]="true"  [header]="'ارشفة '+ selectedItem.productNameWithCountry " [(visible)]="visibleArchiveDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل انت متأكد انك تريد مسح هذا العنصر ؟ </p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onArchiveProduct()" label="ارشفة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Multiple Archive modal -->
+<p-dialog [dismissableMask]="true"  header="ارشفة  " [(visible)]="visibleMultipleArchiveDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل انت متأكد انك تريد مسح {{selectedProducts.length}} من العناصر ؟ </p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onArchiveMultipleProducts()" label="ارشفة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+
+
+
+<!-- update modal -->
+<p-dialog [dismissableMask]="true"  #updateDialog [header]="'تحديث '+ selectedItem.productNameWithCountry" [(visible)]="visibleUpdateDialog" [modal]="true" [draggable]="false" [style]="{width: '65vw'}">
+    <form class="" [formGroup]="updateProductForm" (ngSubmit)="onUpdateSupplyProduct()">
+        <div class="row my-2">
+            <h5 class="d-flex">بيانات اساسية</h5>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">اسم السلعة</h6>
+                <input type="text" placeholder="اسم السلعة" formControlName="productName" class="form-control">
+            </div>
+            <!-- <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">الكمية</h6>
+                <input type="number" placeholder="الكمية" formControlName="quantity" class="form-control">
+            </div> -->
+            
+            
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">سعر الشراء للقطعة</h6>
+                <input type="number" placeholder="سعر الشراء للقطعة" formControlName="piecePurchasePrice" class="form-control">
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> سعر البيع للقطعة</h6>
+                <input type="number" placeholder="سعر البيع للقطعة" formControlName="piecePrice" class="form-control">
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> التصنيف</h6>
+                <p-dropdown appendTo="body" placeholder="التصنيف" [options]="supplyNames" formControlName="supplyName" optionLabel="supply"
+                [filter]="true" filterBy="supply" dataKey="supply"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> بلد القطعة </h6>
+                <p-dropdown appendTo="body" placeholder="بلد القطعة " [options]="supplyCountries" formControlName="manufacturerCountery" optionLabel="country"
+                [filter]="true" filterBy="country" dataKey="country"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> اقل كمية للنواقص</h6>
+                <input type="number" placeholder="اقل كمية للنواقص" formControlName="criticalQuantity" class="form-control">
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">الاسم المختصر</h6>
+                <input type="text"  formControlName="shortName" class="form-control">
+            </div>
+        </div>
+        <div class="row my-2">
+            <h5 class="d-flex">بيانات اضافية</h5>
+            
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> السيارة</h6>
+                <p-dropdown appendTo="body" placeholder="السيارة" [options]="supplyBrands" formControlName="carBrand" optionLabel="brand"
+                [filter]="true" filterBy="brand" (onChange)="onChangeBrand($event)" [showClear]="true" dataKey="brand"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> الموديل</h6>
+                <p-dropdown appendTo="body" placeholder="الموديل" [options]="filteredSupplyModels" formControlName="carModel" optionLabel="model"
+                [filter]="true" filterBy="model" dataKey="model"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right">السنة </h6>
+                <p-dropdown appendTo="body" placeholder="السنة" [options]="supplyReleaseYears" formControlName="releaseYear" optionLabel="year"
+                [filter]="true" filterBy="year" dataKey="year"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-6">
+                <h6 class="d-flex text-right"> المورد</h6>
+                <p-dropdown appendTo="body" placeholder="المورد" [options]="suppliers" formControlName="supplier" optionLabel="companyName"
+                [filter]="true" dataKey="companyName"></p-dropdown>
+            </div>
+            <div class="form-group my-2 col-md-12">
+                <h6 class="d-flex text-right">الوصف</h6>
+                <textarea placeholder="الوصف" formControlName="productDescription" class="form-control" rows="4"></textarea>
+                <hr class="mt-3">
+            </div>
+           
+        </div>
+        
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onUpdateSupplyProduct()" label="حفظ" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Quantity modal -->
+<p-dialog [dismissableMask]="true"  [header]="'ادخال دفعة من  '+ selectedItem.productNameWithCountry" [(visible)]="visibleQuantityDialog" [modal]="true" [draggable]="false" [style]="{width: '60vw'}">
+    <form class="" [formGroup]="newQuantityForm" (ngSubmit)="onIncreaseQuantity()" *ngIf="selectedStorage.storageId !=0">
+        <div class="row my-2">
+            <div class="form-group my-2 col-12">
+                <input type="number" placeholder="الكمية" formControlName="quantity" class="form-control">
+            </div>
+        </div>
+    </form>
+
+    <form class="" [formGroup]="newProductStoragesForm" (ngSubmit)="onIncreasestorageQuantity()" *ngIf="selectedStorage.storageId ==0">
+        <h5 class="d-flex">اختر المخازن المراد ادحال الكميات بها </h5>
+        <p-multiSelect appendTo="body" (onChange)="setQuantiyProductStorages($event)" [options]="storages" defaultLabel="ادخال كمية جديدة على" optionLabel="storageName" selectedItemsLabel="{0} مخازن"
+                formControlName="quantityProductStoragesValues"></p-multiSelect>
+
+        <div class="row" formArrayName="quantityProductStoragesArr" class="quanties">
+            <div class="col-12 my-4 px-0" *ngFor="let st of getQuantityProductStoragesArr().controls; let i = index">
+                <div class="form-group" [formGroupName]="i">
+                    <h6 class="text-right">{{getQuantityProductStoragesArr().controls[i].value.storageName}}</h6>
+                    <input type="number" placeholder="الكمية" formControlName="quantity" class="form-control">
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="selectedStorage.storageId ==0?onIncreasestorageQuantity():onIncreaseQuantity()" label="اضافة" styleClass="p-button-text"></p-button>
+    </ng-template>
+    
+</p-dialog>
+
+<!-- Storages modal -->
+<p-dialog [dismissableMask]="true"  [header]="'توزيعة المخازن ل  '+ selectedItem.productNameWithCountry" [(visible)]="isProductStoragesVisible" [modal]="true"
+ [draggable]="false" [style]="{width: '60vw'}"
+ (onHide)="hideProductStoragesDialog()">
+    <h5 class="text-right my-3">اجمالي الكمية في المخازن :
+        <span class="text-success mx-2"> {{total_product_quantity}} قطعة </span>
+        </h5>
+    <div class="row">
+        <div class="col-4 my-2" *ngFor="let ps of pStorages">
+            <h6 class="text-right">{{ps.storage.storageName}}</h6>
+            <input type="number" placeholder="الكمية" [(ngModel)]="ps.quantity" class="form-control">
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="updateStoragesQuantities()" label="حفظ" styleClass="p-button-text"></p-button>
+    </ng-template>
+    
+</p-dialog>
+
+<app-invoice (refreshParent)="refresh()"></app-invoice>
+
+<div style="width:130px;height:130px;text-align: right;" class="m-0 p-0" id="barcodeContainer">
+    <span class="m-0 p-0"  style="font-size:8px;width:130px;height:130px;text-align: right;">عباد الرحمن</span>
+    <img  id="barcode" style="width:80%;height:80%" class="m-0 p-0">
+    <ng-container *ngIf="selectedItem.shortName">
+        <small class="m-0 p-0" style="font-size: 10px;" style="width:130px;height:130px;text-align: right;">{{selectedItem.shortName}}</small>
+        <br>
+    
+        
+    </ng-container>
+    
+</div>
+
+<app-overlay-spinner [toggler]="
+isLoadingPrinter || 
+isAddingquantities || 
+isUpdatingProduct || 
+isAddingProduct || 
+isGettingStorages" text="جاري التحميل..."></app-overlay-spinner>
+
+<!-- Filters Dialog -->
+<p-dialog dir="rtl"  header="الاجرائات" [dismissableMask]="true" [modal]="true" [(visible)]="isFiltersDialogVisisble" [position]="windowSize <= 768 ? 'center':'top'" 
+[breakpoints]="{
+    '1920px': '50vw',
+    '768px': '75vw',
+    '576px': '90vw'
+    }"
+    [draggable]="false" [resizable]="false">
+    
+    <div class="filters-conteiner"></div>
+    <div>
+        <h6>الترتيب</h6>
+        <div class="table-header text-right row">
+            
+            <span class="p-input-icon-left my-2 filter-container col-6 d-flex align-items-center">
+                <span class="mx-2"> ترتيب</span>
+                <p-dropdown (onChange)="changeOrder($event)" 
+                appendTo="body" placeholder="الترتيب" 
+                [options]="rowsOrder" [(ngModel)]="orderBy" 
+                optionLabel="name" 
+                ></p-dropdown>
+            </span>
+            
+        </div>
+        <hr>
+        <h6 class="my-2">التصفية</h6>
+        <div class="table-header text-right row">
+            
+            <span class="p-input-icon-left my-2 filter-container col-6 d-flex align-items-center">
+                <span class="mx-2"> تصفية حسب</span>
+                <p-dropdown (onChange)="filterByCategory($event)" 
+                (onClear)="cancelFilter3()"  appendTo="body" placeholder="التصنيف" 
+                [options]="supplyNames" [(ngModel)]="selectedFilterItem3" 
+                optionLabel="supply" 
+                [disabled]="searchFilter || selectedFilterItem4" ></p-dropdown>
+                <span class="mx-2" > او</span>
+            </span>
+            <span class="p-input-icon-left my-2 filter-container col-6">
+                <p-dropdown (onChange)="filterByType($event)" 
+                (onClear)="cancelFilter4()"  appendTo="body" placeholder="الجزء" 
+                [options]="supplyTypes" [(ngModel)]="selectedFilterItem4" 
+                optionLabel="type"
+                [disabled]="searchFilter || selectedFilterItem3"></p-dropdown>
+            </span>
+        </div>
+        <button pButton label="مسح التصفية" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clearSearch()"></button>
+        
+    </div>
+</p-dialog>
+
+<!-- Print modal -->
+<!-- <p-dialog [dismissableMask]="true"  header=" طباعة الباركود" [(visible)]="isPrintingDialogVisible" [modal]="true" [draggable]="false" [style]="{width: '30vw'}">
+    <div class="d-flex text-right align-items-center ">
+        <p-checkbox [(ngModel)]="isAllQuantitySelected" [binary]="true" inputId="binary"></p-checkbox>
+        <h6 class="mx-2">طباعة لجميع الكمية المخزنة</h6>
+    </div>
+    
+    <div class="row my-2">
+        <div class="form-group my-2 col-12">
+            <input [disabled]="isAllQuantitySelected" type="number" placeholder="عدد الاستيكرات" [(ngModel)]="selectedStickersQuantity" class="form-control">
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="doPrintStickers('single')" label="طباعة" styleClass="p-button-text"></p-button>
+    </ng-template>
+    
+</p-dialog> -->

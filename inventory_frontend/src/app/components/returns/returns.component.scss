@@ -1,0 +1,44 @@
+.page-header{
+    
+    h4{
+        font-family: 'TheSans', sans-serif;
+    }
+    
+}
+.item-name{
+    font-size: 18px;
+}
+
+.filter-container{
+    width: 450px;
+}
+.total-invoices{
+    h4,h5{
+        font-family: 'TheSans', sans-serif;
+    }
+}
+.invoice-item{
+    border-bottom: 1px solid #FDDB19;
+    text-align: right;
+}
+
+::ng-deep{
+    .p-tabview-nav{
+        padding: 10px;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        li{
+            width: 50%;
+        }
+    }
+    .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link{
+        background: #3B82F6;
+        border-color: #fff;
+        color: #fff;
+    }
+    .p-tabview .p-tabview-nav .p-tabview-ink-bar{
+        display: none ;
+    }
+    
+}

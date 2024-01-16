@@ -1,0 +1,106 @@
+<div class="inv-container" #invContainer>
+    <div class="d-flex flex-row justify-content-between align-items-center
+        inv-header ">
+        <h5 class="m-0 p-2 px-3" (click)="toggleInvBody()">فاتورة جديدة</h5>
+        <button class="btn btn-danger m-2 mx-3" (click)="clearInvoice()">تفريغ</button>
+    </div>
+    <div class="inv-body " *ngIf="invS.isInvoiceExpanded">
+
+        <p-table dir="rtl"
+            #productData
+            responsiveLayout="scroll"
+            [value]="orderItems"
+            [scrollable]="true" scrollHeight="340px">
+
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+
+                    <th class="invoice-head-cell">باركود </th>
+                    <th class="invoice-head-cell">السلعة </th>
+                    <th class="invoice-head-cell">سعر القطعة</th>
+                    <th class="invoice-head-cell">الكمية</th>
+                    <th class="invoice-head-cell">الاجمالي</th>
+                    <th class="invoice-head-cell" style="max-width: 50px;"></th>
+                    <!-- <th></th> -->
+                </tr>
+            </ng-template>
+            <ng-template let-rowIndex="rowIndex" pTemplate="body" let-orderItem
+                let-columns="columns"
+                let-rowgroup="rowgroup" let-rowspan="rowspan">
+                <tr>
+                    <td><strong>{{orderItem.product.barcode?orderItem.product.barcode : '-'}}</strong></td>
+                    <td>{{orderItem.product.productName}}
+                        {{orderItem.product.manufacturerCountery}}</td>
+                    <td>{{orderItem.product.piecePrice}} <br> جنية</td>
+                    <td>
+                        <div class="d-flex flex-column  ">
+                            <input [(ngModel)]="orderItem.product.toInvoiceQuantity" type="number" class="form-control selected-quant-input m-0">
+                            <button class="btn btn-warning  add-to-inv" (click)="onChangeOrderItemQuantity(orderItem.product)">تعديل</button>
+                        </div>
+
+                    <td><strong>{{orderItem.fee}} <br> جنية</strong> </td>
+                    <td style="max-width: 50px;">
+                        <span (click)="removeItem(orderItem)">
+                            <i class="fa-solid fa-x text-danger rmv-icon"></i>
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td class="transparent-bkg"
+                        [attr.colspan]="orderItems.length">
+                        الفاتورة فارغة
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+                <div class="d-flex flex-row
+                    align-items-center text-right font-18">
+                    <h5 class="mb-3 ml-2">شغل اجل؟</h5>
+                    <p-inputSwitch [(ngModel)]="isLongTermInvoice"></p-inputSwitch>
+                </div>
+                <div *ngIf="isLongTermInvoice">
+                    <form class="row align-items-baseline" [formGroup]="longTermWorkForm">
+                        
+                        <div class="col-md-6 my-1">
+
+                            <p-dropdown appendTo="body" placeholder="الشركة"
+                                [options]="systemCompanies"
+                                formControlName="company"
+                                optionLabel="companyName"
+                                [filter]="true"
+                                [showClear]="true"
+                                filterBy="companyName"></p-dropdown>
+
+                        </div>
+                        <div class="col-md-6 my-1">
+                            <input class="form-control text-right" type="number"
+                                formControlName="deposite" placeholder="المقدم">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="d-flex flex-row justify-content-between
+                    align-items-center text-right font-18">
+
+                    <div>
+                        الاجمالي :
+                        <strong class="text-success h5 font-weight-bold">
+                            {{calcOrderTotal(orderItems)}} جنية
+                        </strong>
+                    </div>
+
+                    <div class="">
+                        <button class="btn btn-success"
+                            (click)="isLongTermInvoice ? generateInstallmentinvoice(): generateInvoice()">حفظ <br>و طباعة</button>
+                    </div>
+                </div>
+            </ng-template>
+        </p-table>
+        <div class="inv-footer">
+
+        </div>
+    </div>
+</div>
+<app-overlay-spinner [toggler]="isSubmittingInvoice" text="جاري التحميل..."></app-overlay-spinner>

@@ -1,0 +1,117 @@
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>  مرتجع الموردين</h4>
+</div>
+<main class="my-3">
+    <p-table dir="rtl"  
+    responsiveLayout="scroll" 
+    #expensesToReturnData
+    [value]="expensesInvoices" 
+    [globalFilterFields]="['invoiceId']"
+    
+    [paginator]="true" 
+    [rows]="10" 
+    [lazy]="true"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="paginationOptions.totalRecords">
+
+    <ng-template pTemplate="caption">
+        <div class="table-header text-right d-flex flex-row justify-content-between align-items-baseline px-2">
+            <span class="p-input-icon-left my-2 filter-container">
+                
+                    <input  class="form-control" pInputText type="text" [(ngModel)]="searchFilter" (input)="applyFilterGlobal($event)" placeholder="ابحث برقم الفاتورة" />
+            </span>
+            <button pButton label="مسح البحث" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clearSearch()"></button>
+        </div>
+    </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>رقم الفاتورة </th>
+                <th>التاريخ </th>
+                <th>السلعة</th>
+                <th>اجمالي الفاتورة</th>
+                <th>المخزن</th>
+                <th>الحالة</th>
+                <th>الاجرائات</th>
+                <!-- <th></th> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-invoice let-columns="columns">
+            <tr>
+                <td><strong>{{invoice.invoiceId}}</strong></td>
+                <td style="direction: ltr;"> {{invoice.creationDate | date:'dd-MM-YYYY'}} {{invoice.creationDate | date:'hh:mm a'}}</td>
+                
+                <td >
+                    <h6 class="item-name" >
+                       <span class="badge badge-warning">
+                        {{invoice?.product?.productName + "  "}} {{invoice?.product?.manufacturerCountery}} <br>
+                        <span class="my-2"> عدد القطع x<strong>{{invoice.quantity}} </strong></span> <br>
+                        <span class="my-1"> {{invoice.product?.piecePurchasePrice}} جنية للقطعة</span> 
+                    </span> 
+                    <span *ngIf="invoice.isReturned == 1" class="font-italic text-danger"> مرتجع</span>
+                    </h6>
+                </td>
+                <td>{{invoice.totalFees}} جنية </td>
+                <td>{{invoice.storage?invoice.storage.storageName:'الجميع'}}</td>
+                <td *ngIf="invoice.done == 1"><span class="badge badge-success">خالصة </span></td>
+                <td *ngIf="invoice.done == 0" ><span class="badge badge-danger">لم تنتهي بعد</span></td>
+                <td class="actions-cell" >
+                    <button type="button" pButton icon="pi pi-bars" label="" (click)="selectedInvoice = invoice;menu.toggle($event)"></button>
+                    
+                </td>
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="expensesInvoices.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{expensesInvoices ? expensesInvoices.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+    <p-menu #menu [popup]="true" [model]="actionList" appendTo="body" ></p-menu>
+</main>
+
+<!-- return items modal -->
+<p-dialog [dismissableMask]="true"  [header]="'ارجاع عناصر من فاتورة '+ selectedInvoice.invoiceId + ' [ ' + selectedInvoice.product?.productName + ' ] ' " [(visible)]="visibleReturnDialog" [modal]="true" [draggable]="false" [style]="{width: '80vw'}">
+    <div class="text-right " >
+        <h3>ادخل الكمية المراد ارجاعها من كل مخزن</h3>
+        
+        <form class="" [formGroup]="returnsForm" (ngSubmit)="returnItems()">
+
+            <div class="row my-3" formArrayName="storagesQuantity"> 
+                
+                <div class="col-md-6 my-2" *ngFor="let storage of getProductStoragesArr().controls; let i=index">
+                    <div class="form-group" [formGroupName]="i">
+                        
+                        <h5 dir="rtl">{{productstorage[i]?.storage?.storageName}} يحتوي على اجمالي : 
+                            <strong> {{productstorage[i]?.quantity}} قطعة </strong>
+                        </h5>
+                        <p-inputNumber mode="decimal" formControlName="returnQuantity"
+                        placeholder="الكمية المراد ارجاعها من هذا المخزن" 
+                        mode="decimal"> </p-inputNumber>
+
+
+                    </div>
+                    
+    
+                </div>
+
+            </div>
+
+        </form>
+        
+    </div>
+    <ng-template pTemplate="footer" >
+        <p-button icon="pi pi-check" (click)="returnItems()" label="ارجاع" styleClass="p-button-text"></p-button>
+    </ng-template>
+    
+</p-dialog>
+
+<!-- Loading -->
+<app-overlay-spinner [toggler]="
+isLoadingStorages" text="جاري التحميل..."></app-overlay-spinner>

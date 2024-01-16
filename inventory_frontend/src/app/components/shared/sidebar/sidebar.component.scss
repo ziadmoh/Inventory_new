@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@700&display=swap');
+li{
+    .aside-link{
+        font-family: 'TheSans', sans-serif;
+        // font-family: 'Air Strip Arabic', sans-serif;
+
+        font-size: 22px;
+        font-weight: 900;
+        // letter-spacing: 1px;
+        border: none !important;
+        color: #fff !important;
+        cursor: pointer;
+        
+    }
+    &.active{
+        .aside-link{
+            background-color: #fff !important;
+            color: #00336B !important;
+            border-radius: 10px;
+        }
+    }
+    &:hover{
+        color: #fddb19;
+    }
+}
+.sidebar-admin{
+    min-height: 100%;
+    @media (max-width:990px) {
+        overflow: hidden;
+    }
+}
+
+.floating-li{
+    
+    float: right;
+}
+.logo-img-lg{
+    width: 150px;
+}
+.logo-img-sm{
+    width: 65px;
+}
+::ng-deep{
+    .p-tooltip	{
+        font-size: 22px;
+        border-radius: 4px;
+        padding: 10px 20px;
+     //   background-color: #ffffff;
+        min-width: 180px;
+        min-height: 30px;
+        text-align: center;
+        .p-tooltip-text{
+            background-color: #ffffff;
+            color: #00336B;
+        }
+        
+    }
+    .p-tooltip.p-tooltip-left .p-tooltip-arrow{
+        border-left-color: #ffffff; 
+    }
+}
+.tooltip-light{
+    background-color: #ffffff;
+        color: #00336B;
+}
+.li-icon{
+    color: #fddb19;
+}
+.list-container{
+    background-color: inherit;
+    max-height: 100%;
+    direction: ltr;
+    overflow: auto;
+    ul{
+        direction: rtl;
+        padding: 5px !important;
+    }
+}

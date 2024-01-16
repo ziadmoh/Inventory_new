@@ -1,0 +1,127 @@
+/* You can add global styles to this file, and also import other style files */
+body{
+    direction: rtl;
+
+}
+//::ng-deep{
+    
+    .p-submenu-header{
+        text-align: right;
+    }
+    .p-datatable-table{
+        .p-datatable-thead{
+            tr{
+                th {text-align: right; direction: rtl;}
+
+            }
+
+        }
+        .p-datatable-tbody{
+            tr{
+                td{
+                    font-size: 18px;
+                    text-align: right;
+                     direction: rtl;}
+
+            }
+        }
+        
+    }
+
+    .p-menuitem-icon{
+        margin-left:.5rem ;
+        margin-right: .5rem;
+    }
+    .p-dialog-footer{
+        .p-button-icon{
+            margin-left: 0.5rem;
+            margin-right: 0;
+        }
+    }
+    .toast-title{
+        font-size: 20px;
+        font-weight: 500;
+    }
+    .p-dropdown.p-component{
+        width: 100%;
+        text-align: right;
+    }
+    .p-inputnumber .p-component{
+        width: 100%;
+        text-align: right;
+    }
+    .p-multiselect.p-component{
+        width: 100%;
+        text-align: right;
+    }
+    .p-element.p-inputwrapper{
+        width: 100%;
+    }
+    .p-dropdown {
+        .p-dropdown-clear-icon{
+            left: 3rem;
+            right: auto;
+        }
+    }
+    .p-multiselect-panel .p-multiselect-items .p-multiselect-item .p-checkbox{
+        margin-left: .5rem;
+        margin-right: 0;
+    }
+    .p-multiselect-panel .p-multiselect-header .p-checkbox{
+        margin-left: .5rem;
+        margin-right: 0;
+    }
+
+    .p-inputnumber{
+        flex-direction: row-reverse;
+    }
+    .p-datatable .p-paginator-bottom{
+        direction: ltr;
+    }
+    .p-datatable .p-datatable-header{
+          background: #F5F7FC;
+          border: 0;
+          padding: 15px 0;
+    }
+    .p-datatable-wrapper{
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+        border-bottom: 1px solid #DDE1ED;
+        border-left: 1px solid #DDE1ED;
+        border-right: 1px solid #DDE1ED;
+    }
+    .p-datatable .p-datatable-thead > tr > th{
+        font-size: 20px;
+        background: #DDE1ED;
+        
+    }
+    .p-paginator.p-component{
+        background: #F5F7FC;
+    }
+    .p-dropdown-items-wrapper{
+        direction: ltr;
+    }
+    p-dropdownitem.p-element {
+        li{
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+        }
+    }
+//}
+
+::ng-deep{
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-item{
+        font-size: 18px;
+    }
+    .p-datatable{
+        .p-datatable-tbody{
+            tr{
+                td{
+                    width: 20% !important;
+                }
+            }
+        }
+        
+    }
+}

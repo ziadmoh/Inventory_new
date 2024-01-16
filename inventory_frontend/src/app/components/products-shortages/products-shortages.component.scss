@@ -1,0 +1,40 @@
+
+.page-header{
+    
+    h4{
+        font-family: 'TheSans', sans-serif;
+    }
+}
+
+.actions-cell{
+    width: 90px;
+    
+}
+.rmv-desc{
+    font-size: 17px;
+    font-weight: 600;
+}
+.transparent-bkg{
+    background-color: #F5F7FC;
+}
+.filter-container{
+    width: 450px;
+}
+.form-control{
+    direction: rtl;
+    margin-bottom: 0 !important;
+}
+.add-to-inv{
+    cursor: pointer;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-size: 15px;
+    padding: 5px 10px;
+    font-weight: bolder;
+   // box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+.selected-quant-input{
+    width: 80px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}

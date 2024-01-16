@@ -1,0 +1,83 @@
+<!--Page Header -->
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>اجزاء السيارة </h4>
+    <p-button label="اضافة جزء" (click)="showAddDialog()"  styleClass="p-button-sm"></p-button>
+</div>
+<!-- List section -->
+<main class="my-3">
+    <p-table dir="rtl"  
+    responsiveLayout="scroll"
+    [value]="supplyTypes" 
+    [paginator]="true" 
+    [rows]="10" 
+    [totalRecords]="supplyTypes.length">
+ 
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>الجزء</th>
+                <th>الاجرائات</th>
+                <!-- <th></th> -->
+            </tr>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" pTemplate="body" let-supplyType let-columns="columns"
+        let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr>
+                <td>{{supplyType.type}}</td>
+                <td class="actions-cell">
+                    <!-- <i class="fa-solid fa-ellipsis" (click)="menu.toggle($event)"></i> -->
+                    
+
+                    <button type="button" pButton icon="pi pi-bars" label="" (click)="selectedItem = supplyType;menu.toggle($event)"></button>
+                    
+                </td>
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="supplyTypes.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{supplyTypes ? supplyTypes.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>
+<!-- Actions menu -->
+<p-menu #menu [popup]="true" [model]="actionList" appendTo="body"></p-menu>
+<!-- Add modal -->
+<p-dialog [dismissableMask]="true"  #addDialog header="اضافة جزء" [(visible)]="visibleAddDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+    <form class="my-4" [formGroup]="newTypeForm" (ngSubmit)="onAddSupplyType()">
+        
+        <div class="form-group my-4">
+            <input type="text" placeholder="اسم الجزء" formControlName="typeName" class="form-control">
+        </div>
+        
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onAddSupplyType()" label="اضافة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Archive modal -->
+<p-dialog [dismissableMask]="true"  [header]="'ارشفة '+ selectedItem.type " [(visible)]="visibleArchiveDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل انت متأكد انك تريد مسح هذا العنصر ؟ </p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onArchiveType()" label="ارشفة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete modal -->
+<p-dialog [dismissableMask]="true"  [header]="'حذف '+ selectedItem.type " [(visible)]="visibledeleteDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل ترغب في حذف هذه السنة</p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onDeleteSupplyType()" label="حذف" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+

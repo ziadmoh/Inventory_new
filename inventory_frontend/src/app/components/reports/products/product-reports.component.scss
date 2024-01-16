@@ -1,0 +1,93 @@
+
+
+.merchant-img{
+  min-height: 50px;
+  max-height: 60px;
+  border-radius: 50px;
+}
+
+@media (max-width: 960px) {
+  .merchant-img{
+    min-height:15px;
+    max-height: 50px;
+    
+  }
+}
+
+.transaction-row{
+  background: #F8F9FA;
+  border: 1px solid var(--surface-border);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--card-shadow);
+  border-radius: 6px;
+}
+
+::ng-deep {
+  .p-datepicker .p-datepicker-header .p-datepicker-prev, .p-datepicker .p-datepicker-header .p-datepicker-next{
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+  }
+
+  .saved-image {
+    width: 50px;
+  }
+
+  .p-calendar, 
+  .p-inputnumber, 
+  .p-element.p-inputwrapper, 
+  .p-dropdown.p-component,
+  .p-element.p-inputwrapper,
+  .p-autocomplete,
+  .p-autocomplete-input {
+    width: 100%;
+  }
+
+  .button-style {
+    width: 100% !important;
+  }
+
+  .p-datatable-scrollable .p-datatable-wrapper{
+    overflow: hidden !important;
+  }
+
+  .p-button-icon{
+    margin: 0px 3px !important;
+  }
+}
+label{
+  font-weight: 400;
+}
+.loading-container{
+  position: relative;
+  width: 100%;
+  min-height:50px;
+  margin: 10px 0;
+  .loading-layer{
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      background-color: rgb(0 0 0 / 36%);
+      z-index: 100;
+      left: 0;
+      top: 0;
+      .loading-spinner-icon{
+          color: #fff;
+          font-size: 26px;
+          font-weight: bold;
+      
+      }
+  }
+
+}
+.filters-conteiner{
+  max-height: 300px;
+  overflow: auto;
+}
+
+.page-header{
+    
+  h4{
+      font-family: 'TheSans', sans-serif;
+  }
+}

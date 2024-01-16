@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkinventory=self.webpackChunkinventory||[]).push([[592],{5601:(t,r,n)=>{n.d(r,{m:()=>u});var _=n(7014),o=n(5062);let u=(()=>{class e{}return e.\u0275fac=function(d){return new(d||e)},e.\u0275mod=o.oAB({type:e}),e.\u0275inj=o.cJS({imports:[_.g,_.g]}),e})()}}]);

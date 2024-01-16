@@ -1,0 +1,135 @@
+<!--Page Header -->
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>النواقص</h4>
+    <div class="d-flex flex-row align-items-center">
+         <p-button label="تصفية" (click)="isFiltersDialogVisisble = true"  styleClass="p-button-sm btn-warning"></p-button>
+         
+    </div>
+</div>
+<!-- List section -->
+<main class="my-3">
+    <p-table dir="rtl"  
+    [loading]="isProductsLoading"
+    #shortagesData
+    responsiveLayout="scroll"
+    [value]="supplyProducts" 
+    [globalFilterFields]="['productNameWithCountry']"
+    
+    [paginator]="true" 
+    [rows]="10" 
+    [lazy]="true"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="paginationOptions.totalRecords">
+    <!-- Search and filters -->
+    <ng-template pTemplate="caption">
+        <div class="table-header text-right d-flex flex-row justify-content-between">
+            <span class="p-input-icon-left my-2 filter-container">
+                
+                    <input  class="form-control" pInputText type="text" [(ngModel)]="searchFilter" 
+                    (input)="applyFilterGlobal($event)" placeholder="ابحث باسم السلعة او الباركود" 
+                    [disabled]="selectedFilterItem3 || selectedFilterItem4" />
+            </span>
+            <div>
+                
+                <button pButton label="مسح البحث" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clearSearch()"></button>
+            </div>
+            
+        </div>
+       
+    </ng-template> 
+   <!-- Table Data -->
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th pSortableColumn="productNameWithCountry">السلعة <p-sortIcon field="productNameWithCountry"></p-sortIcon></th>
+
+                <th>السيارة</th>
+                <th>السنة</th>
+                <th>سعر البيع للقطعة</th>
+                <th>تاريخ الاضافة </th>
+                <th>الكمية في المخزن </th>
+            </tr>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" pTemplate="body" let-supplyProduct let-columns="columns"
+        let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr>
+                <td >
+                    <span class="d-flex flex-row align-items-center">
+                       <span  class="text-danger font-weight-bold"> {{supplyProduct.productNameWithCountry}} </span>
+                        
+                    </span>
+                    
+                </td>
+                <td>{{supplyProduct.carBrand && supplyProduct.carModel? supplyProduct.carBrand.brand + ' ' + supplyProduct.carModel.model
+                    : '-'}}</td>
+                <td>{{supplyProduct.releaseYear?supplyProduct.releaseYear.year : '-'}}</td>
+                <td>{{supplyProduct.piecePrice}} جنية</td>
+                <td style="direction: ltr;"> {{supplyProduct.addedAt | date:'dd-MM-YYYY'}} {{supplyProduct.addedAt | date:'hh:mm a'}}</td>
+                <td><strong class="text-danger font-weight-bold" >{{supplyProduct.quantity}}</strong> </td>
+
+                
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="supplyProducts.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{supplyProducts ? supplyProducts.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>
+
+<!-- Filters Dialog -->
+<p-dialog dir="rtl"  header="الاجرائات" [dismissableMask]="true" [modal]="true" [(visible)]="isFiltersDialogVisisble" [position]="windowSize <= 768 ? 'center':'top'" 
+[breakpoints]="{
+    '1920px': '50vw',
+    '768px': '75vw',
+    '576px': '90vw'
+    }"
+    [draggable]="false" [resizable]="false">
+    
+    <div class="filters-conteiner"></div>
+    <div>
+        <h6>الترتيب</h6>
+        <div class="table-header text-right row">
+            
+            <span class="p-input-icon-left my-2 filter-container col-6 d-flex align-items-center">
+                <span class="mx-2"> ترتيب</span>
+                <p-dropdown (onChange)="changeOrder($event)" 
+                appendTo="body" placeholder="الترتيب" 
+                [options]="rowsOrder" [(ngModel)]="orderBy" 
+                optionLabel="name" 
+                ></p-dropdown>
+            </span>
+            
+        </div>
+        <hr>
+        <h6 class="my-2">التصفية</h6>
+        <div class="table-header text-right row">
+            
+            <span class="p-input-icon-left my-2 filter-container col-6 d-flex align-items-center">
+                <span class="mx-2"> تصفية حسب</span>
+                <p-dropdown (onChange)="filterByCategory($event)" 
+                (onClear)="cancelFilter3()"  appendTo="body" placeholder="التصنيف" 
+                [options]="supplyNames" [(ngModel)]="selectedFilterItem3" 
+                optionLabel="supply" 
+                [disabled]="searchFilter || selectedFilterItem4" ></p-dropdown>
+                <span class="mx-2" > او</span>
+            </span>
+            <span class="p-input-icon-left my-2 filter-container col-6">
+                <p-dropdown (onChange)="filterByType($event)" 
+                (onClear)="cancelFilter4()"  appendTo="body" placeholder="الجزء" 
+                [options]="supplyTypes" [(ngModel)]="selectedFilterItem4" 
+                optionLabel="type"
+                [disabled]="searchFilter || selectedFilterItem3"></p-dropdown>
+            </span>
+        </div>
+        
+    </div>
+</p-dialog>
+

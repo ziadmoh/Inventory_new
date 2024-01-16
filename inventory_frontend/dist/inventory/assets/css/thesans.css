@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'TheSans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('TheSans'), url('../fonts/TheSansBold2.woff') format('woff');
+}
+
+

@@ -1,0 +1,84 @@
+<!--Page Header -->
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>سنوات الاصدار</h4>
+    <p-button label="اضافة سنوات اصدار" (click)="showAddDialog()"  styleClass="p-button-sm"></p-button>
+</div>
+<!-- List section -->
+<main class="my-3">
+    <p-table dir="rtl"  
+    responsiveLayout="scroll"
+    [value]="years" 
+    [paginator]="true" 
+    [rows]="10" 
+    [totalRecords]="years.length">
+ 
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>السنوات المتاحة </th>
+                <th>الاجرائات</th>
+                <!-- <th></th> -->
+            </tr>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" pTemplate="body" let-year let-columns="columns"
+        let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr>
+                <td>{{year.year}}</td>
+                <td class="actions-cell">
+                    <!-- <i class="fa-solid fa-ellipsis" (click)="menu.toggle($event)"></i> -->
+                    
+
+                    <button type="button" pButton icon="pi pi-bars" label="" (click)="selectedItem = year;menu.toggle($event)"></button>
+                    
+                </td>
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="years.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{years ? years.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>
+<!-- Actions menu -->
+<p-menu #menu [popup]="true" [model]="actionList" appendTo="body"></p-menu>
+<!-- Add modal -->
+<p-dialog [dismissableMask]="true"  #addDialog header="اضافة سنوات" [(visible)]="visibleAddDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+    <form class="my-4" [formGroup]="newYearForm" (ngSubmit)="onAddYear()">
+        
+        <div class="form-group my-4">
+            <p-multiSelect appendTo="body" placeholder="اختر السنوات " [options]="yearsList" formControlName="yearName" optionLabel="year">
+            </p-multiSelect>
+        </div>
+        
+    </form>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="onAddYear()" label="اضافة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Archive modal -->
+<p-dialog [dismissableMask]="true"  [header]="'ارشفة '+ selectedItem.year " [(visible)]="visibleArchiveDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل انت متأكد انك تريد مسح هذا العنصر ؟ </p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onArchiveYear()" label="ارشفة" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+<!-- Delete modal -->
+<p-dialog [dismissableMask]="true"  [header]="'حذف '+ selectedItem.year " [(visible)]="visibledeleteDialog" [modal]="true" [draggable]="false" [style]="{width: '50vw'}">
+   
+    <p class="text-right rmv-desc"> هل ترغب في حذف هذه السنة</p>
+    <ng-template pTemplate="footer">
+        <p-button class="" icon="pi pi-check" (click)="onDeleteYear()" label="حذف" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
+
+

@@ -1,0 +1,36 @@
+.page-header{
+    
+    h4{
+        font-family: 'TheSans', sans-serif;
+    }
+    
+}
+.item-name{
+    font-size: 18px;
+}
+
+.filter-container{
+    width: 450px;
+}
+.total-invoices{
+    h4,h5{
+        font-family: 'TheSans', sans-serif;
+    }
+}
+.invoice-item{
+    border-bottom: 1px solid #FDDB19;
+    text-align: right;
+}
+
+// ::ng-deep{
+//     .p-datatable{
+//         .p-datatable-tbody{
+//             tr{
+//                 td{
+//                     width: 20% !important;
+//                 }
+//             }
+//         }
+        
+//     }
+// }

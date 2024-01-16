@@ -1,0 +1,194 @@
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4 >تقارير انواع السيارات </h4>
+    <div class="d-flex flex-row align-items-center">
+
+        <button [disabled]="isLoadingReport ||
+                isExporting || !report.length" type="button"
+                pButton pRipple icon="pi pi-file-excel"
+                (click)="exportExcel()"
+                class="p-button-success mx-2"
+                pTooltip="XLS" tooltipPosition="bottom"
+                [label]="windowSize <= 768 ? '':' اكسيل '"
+                [loading]="isExporting">
+        </button>
+
+        <p-button label="التصفية" (click)="showFilterSDialog()"  
+        styleClass="mx-2 p-button-sm btn-warning" ></p-button>
+       
+    </div>
+</div>
+
+<main class="my-3">
+    <p-table 
+    dir="rtl"
+    [scrollable]="true" 
+    scrollHeight="1400px" 
+    [virtualScroll]="true" 
+    [virtualRowHeight]="120"
+     (onSort)="customSort($event)" [customSort]="true" #dt
+        [loading]="isLoadingReport" class="mt-2" [value]="report"
+        [lazy]="true"
+        >
+        <ng-template pTemplate="header">
+            <tr>
+                
+                <th pSortableColumn="carBrandId" >
+                    رقم النوع
+                    <p-sortIcon field="carBrandId"></p-sortIcon>
+                </th>
+                <th pSortableColumn="brand" >
+                    اسم النوع
+                    <p-sortIcon field="brand"></p-sortIcon>
+                </th>
+                
+
+                <ng-container *ngIf="filtersForm.get('prespective_type').value?.value && 
+                filtersForm.get('prespective_type').value?.value != 'total_earn' ">
+                    <th pSortableColumn="invoiceCount">
+                        عدد مرات الظهور في الفواتير
+                        <p-sortIcon field="invoiceCount"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="totalFeesSum">
+                        اجمالي مبلغ الظهور في الفواتير
+                        <p-sortIcon field="totalFeesSum"></p-sortIcon>
+                    </th>
+                </ng-container>
+
+                <ng-container *ngIf="filtersForm.get('prespective_type').value?.value && 
+                filtersForm.get('prespective_type').value?.value == 'total_earn' ">
+                   
+                    <th pSortableColumn="totalEarnSum">
+                        اجمالي الربح
+                        <p-sortIcon field="totalEarnSum"></p-sortIcon>
+                    </th>
+                </ng-container>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-single>
+            <tr>
+
+                <td>
+                    <div>{{single.carBrandId}}</div>
+                </td>
+                
+                <td>
+                    <div>{{single.brand}}</div>
+                </td>
+
+                <ng-container *ngIf="filtersForm.get('prespective_type').value?.value && 
+                filtersForm.get('prespective_type').value?.value != 'total_earn' ">
+                    <td>
+                        <div>{{single.invoiceCount? ( single.invoiceCount | numberGroup ) : '-'}}</div>
+                    </td>
+
+                    <td>
+                        <div>{{single.totalFeesSum? ( single.totalFeesSum  | numberGroup ) +  ' جنية ' : '-'}}</div>
+                    </td>
+                </ng-container>
+
+                <ng-container *ngIf="filtersForm.get('prespective_type').value?.value && 
+                filtersForm.get('prespective_type').value?.value == 'total_earn' ">
+                  
+
+                    <td>
+                        <div>{{single.totalEarnSum? ( single.totalEarnSum  | numberGroup ) +  ' جنية ' : '-'}}</div>
+                    </td>
+                </ng-container>
+
+
+                
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            لاتوجد منتجات بعد
+
+        </ng-template>
+    </p-table>
+</main>
+
+
+<div class="copied-success" *ngIf="isCopiyingId">
+    تم النسخ الى الحافظة
+</div>
+<!-- Filters Dialog -->
+<p-dialog header="تصفية المنتجات" [dismissableMask]="true" [modal]="true"
+    [(visible)]="isFiltersDialogVisisble" [position]="windowSize <= 768 ?
+    'center':'right'"
+    [breakpoints]="{
+    '1920px': '50vw',
+    '768px': '75vw',
+    '576px': '90vw'
+    }"
+    [draggable]="false" [resizable]="false">
+
+    <div class="text-right">
+        <h6>الفلاتر</h6>
+        <form [formGroup]="filtersForm" autocomplete="off">
+            <div class="row">
+                <ng-container *ngIf="filtersForm.controls['prespective_type']">
+                    <div class="col-md-12">
+                        <label class="block
+                            font-medium my-2"> عرض حسب </label>
+
+
+                        <p-dropdown appendTo="body" inputId="f_prespective_type" 
+                        [options]="prespective_types" 
+                            formControlName="prespective_type" optionLabel="name"
+                            placeholder="عرض حسب "></p-dropdown>
+                    </div>
+                </ng-container>
+
+                <div class="col-md-6" dir="rtl">
+                    <label class="block
+                        font-medium my-2">ابتداء من تاريخ</label>
+                    <p-calendar dir="rtl" appendTo="body" formControlName="date_from"
+                        selectionMode="single" [readonlyInput]="true"
+                        dataType="string"
+                        [showClear]="true"
+                        placeholder="ابتداء من تاريخ"
+                        dateFormat="yy-mm-dd"
+                        ></p-calendar>
+
+                </div>
+
+                <div class="col-md-6">
+                    <label class="block
+                        font-medium my-2">الى تاريخ </label>
+                    <p-calendar appendTo="body" formControlName="date_to"
+                        selectionMode="single" [readonlyInput]="true"
+                        dataType="string"
+                        placeholder="الى تاريخ"
+                        dateFormat="yy-mm-dd"
+                        [showClear]="true"></p-calendar>
+
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+    <hr>
+
+
+
+    <ng-template pTemplate="footer">
+        <!-- Apply/ Cancel filters -->
+        <div class="d-flex flex-column mt-4">
+            <div class="d-flex">
+                <p-button class="w-100" label="تصفية"
+                    styleClass="p-button-help button-style"
+                    (click)="applyFilters()"></p-button>
+
+            </div>
+            <div class="d-flex my-2">
+                <p-button class="w-100" label="الغاء التصفية"
+                    styleClass="p-button-outlined p-button-secondary
+                    button-style"
+                    (click)="cancelAllFilters()"></p-button>
+
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

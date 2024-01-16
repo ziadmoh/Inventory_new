@@ -1,0 +1,81 @@
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>فواتير مرتجع الموردين</h4>
+</div>
+<main class="my-3">
+    <p-table dir="rtl"  
+    responsiveLayout="scroll" 
+    [value]="expensesInvoices" 
+    
+    
+    [paginator]="true" 
+    [rows]="10" 
+    [lazy]="true"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="paginationOptions.totalRecords">
+    <ng-template pTemplate="caption">
+        <div  class="table-header row justify-content-between align-items-center px-4">
+            <span class="p-input-icon-left filter-container col-md-6">
+                <p-dropdown  [showClear]="true" (onChange)="filterInvoices($event)" 
+                (onClear)="cancelFilter()"  appendTo="body" placeholder="تصفية الفواتير" 
+                [options]="filterTypes"
+                optionLabel="name" [(ngModel)]="selectedFilterType"></p-dropdown>
+            </span>
+            <div class=" total-invoices col-md-6">
+                <h5>اجمالي المرتجع</h5>
+                <h4 class="text-success">{{totalSum | number:'1.0':'en-US'}} جنية</h4>
+            </div>
+        </div>
+        
+    </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>رقم المرتجع </th>
+                <th>رقم الفاتورة </th>
+                <th>التاريخ </th>
+                <th>السلعة</th>
+                <th>اجمالي الفاتورة</th>
+                <th>المخزن</th>
+                <th>الكمية المرتجعة</th>
+                <th>مضيف الفاتورة</th>
+                <!-- <th></th> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-invoice let-columns="columns">
+            <tr>
+                <td><strong>{{invoice.expenseReturnId}}</strong></td>
+                <td><strong>{{invoice.invoiceId}}</strong></td>
+                <td style="direction: ltr;"> {{invoice.addedAt | date:'dd-MM-YYYY'}} {{invoice.creationDate | date:'hh:mm a'}}</td>
+                <td >
+                    <h6 class="item-name" >
+                       <span class="badge badge-warning">
+                        {{invoice.product?.productName + "  "}} {{invoice.product?.manufacturerCountery}} <br>
+                        <span class="my-1"> {{invoice.product.piecePurchasePrice}} جنية للقطعة</span> 
+                    </span> 
+                        
+                    </h6>
+                </td>
+                <td>{{invoice.returnedTotalFees}} جنية </td>
+                <td class="d-flex flex-column"> 
+                    <span *ngFor="let storage of invoice.storages">
+                        {{storage.storageName}} - {{storage.newQuantity}} قطعة
+                    </span>
+                </td>
+                <td>  {{invoice.returnedQuantity}} قطعة </td>
+              
+                <td>{{invoice.user?.fullName}} {{invoice.user?.type == "admin"?'ادمن' :'كاشير' }}</td>
+              </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="expensesInvoices.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{expensesInvoices ? expensesInvoices.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>

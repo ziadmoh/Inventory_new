@@ -1,0 +1,100 @@
+<div class="d-flex flex-row justify-content-between page-header">
+    <h4>فواتير الاجل</h4>
+</div>
+<main class="my-3">
+    <p-table dir="rtl"  
+    responsiveLayout="scroll" 
+    [value]="longTermsInvoices" 
+    
+    [paginator]="true" 
+    [rows]="10" 
+    [lazy]="true"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="paginationOptions.totalRecords">
+
+    <ng-template pTemplate="caption">
+        <div  class="table-header row justify-content-between align-items-center">
+            <span class="p-input-icon-left filter-container col-md-6">
+                <p-dropdown  [showClear]="true" (onChange)="filterInvoices($event)" 
+                (onClear)="cancelFilter()"  appendTo="body" placeholder="تصفية الفواتير" 
+                [options]="filterTypes"
+                optionLabel="name" [(ngModel)]="selectedFilterType"></p-dropdown>
+            </span>
+            <div class=" total-invoices col-md-6">
+                <h5>اجمالي الاجل</h5>
+                <h4 class="text-success">{{totalSum | number:'1.0':'en-US'}} جنية</h4>
+            </div>
+        </div>
+    </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>رقم الفاتورة</th>
+                <th>التاريخ </th>
+                <th>السلع </th>
+                <th>الدفعات </th>
+                <th> المستلم / الاجمالي</th>
+                <th>المخزن</th>
+                <th>الحالة</th>
+                <th>مضيف الفاتورة</th>
+            </tr>
+        </ng-template>
+        <ng-template let-rowIndex="rowIndex" pTemplate="body" let-invoice let-columns="columns"
+        let-rowgroup="rowgroup" let-rowspan="rowspan">
+            <tr>
+                <td >
+                    <strong> {{invoice.invoiceId}} </strong>
+                </td>
+                <td style="direction: ltr;" >
+                    <span *ngIf="invoice.creationDate">
+                        {{invoice.creationDate | date:'dd-MM-YYYY' }} {{invoice.creationDate | date:'hh:mm a' }}
+                    </span>
+                    <span *ngIf="!invoice.creationDate">
+                        -
+                    </span>
+                </td>
+                <td >
+                    <div *ngFor="let item of invoice.orderItems;let i = index">
+                        <h6 class="">
+                            <span class="badge badge-warning">{{item.product.productName + "  "}} 
+                                {{item.product.manufacturerCountery}} <br> 
+                                <span class="my-2"> عدد القطع x<strong>{{item.quantity}}</strong> </span> <br>
+                                <span class="my-1"> {{item.product.piecePrice}} جنية للقطعة</span> 
+                            </span> 
+                            <span *ngIf="item.isReturned == 1" class="font-italic text-danger"> مرتجع</span>
+                             <span *ngIf="i <invoice.orderItems.length -1"> , </span>
+                         </h6>
+                    </div>   
+                </td>
+                <td>
+                    <div *ngFor="let payment of invoice.payments;let i = index" [ngClass]="i < invoice.payments.length - 1 ? 'invoice-item' :'' ">
+                        <div class=" d-flex flex-column">
+                            <span class="my-1" style="direction: ltr"> {{payment.addedAt | date:'dd-MM-YYYY'}}    </span> 
+                            <strong class="my-1" >    {{payment.deposite}}  جنية </strong> 
+                         </div>
+                    </div>   
+                </td>
+                
+                
+                <td>{{invoice.recievedFees}} جنية / {{invoice.totalFees}} جنية </td>
+                <td>{{invoice.storage?invoice.storage.storageName:'الجميع'}}</td>
+                <td *ngIf="invoice.done == 1"><span class="badge badge-success">خالصة </span></td>
+                <td *ngIf="invoice.done == 0" ><span class="badge badge-danger">لم تنتهي بعد</span></td>
+                <td>{{invoice.user.fullName}} {{invoice.user.type == "admin"?'ادمن' :'كاشير' }}</td>
+                
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td class="transparent-bkg" [attr.colspan]="longTermsInvoices.length">
+                    لا توجد بيانات بعد
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                الاجمالي {{longTermsInvoices ? longTermsInvoices.length : 0 }}
+            </div>
+        </ng-template>
+    </p-table>
+</main>

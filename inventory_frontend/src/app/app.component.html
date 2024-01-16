@@ -1,0 +1,11 @@
+<div class="loading-container" *ngIf="isLoading ">
+    <p-progressBar [value]="progressValue " [style]="{'height': '3px'}" [showValue]="false"></p-progressBar>
+</div>
+<div class="main">
+
+    <router-outlet></router-outlet>
+</div>
+<div class="my-overlay" *ngIf="showOverlay">
+    <i class="pi pi-spin pi-spinner" style="font-size: 4rem;color:#00336B"></i>
+
+  </div>

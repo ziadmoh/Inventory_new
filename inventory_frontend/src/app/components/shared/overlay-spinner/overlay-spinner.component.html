@@ -1,0 +1,12 @@
+<p-dialog header=" " [(visible)]="toggler"  [modal]="true" [style]="windowSize <= 576 ? {width: '65vw'} :{width: '15vw'}"
+    [draggable]="false" [closable]="false" [resizable]="false" [dismissableMask]="true" [closeOnEscape]="false" 
+    >
+
+    <div class="d-flex flex-row justify-content-center align-items-center">
+        <i class="pi pi-spin pi-spinner text-primary mx-2"></i>{{text?text:''}}
+    </div>
+    
+        
+
+</p-dialog>
+

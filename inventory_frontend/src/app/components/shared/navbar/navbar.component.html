@@ -1,0 +1,108 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light admin-nav m-4">
+  <div class="container-fluid">
+
+    <button type="button" id="sidebarCollapse" class="btn btn-primary btn-nav-toggle" (click)="toggleAside()">
+      <i class="fa-solid fa-bars"></i>
+      <span class="sr-only">Toggle Menu</span>
+    </button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- <p-dropdown styleClass="storage-selection-mb" [(ngModel)]="selectedStorage" [options]="storages" placeholder="اختر مخزن" optionLabel="storageName" [showClear]="true"></p-dropdown> -->
+    <!-- <button class="btn btn-dark d-inline-block d-lg-none mr-auto btn-nav-toggle" 
+    type="button" data-toggle="collapse" 
+    data-target="#navbarSupportedContent" 
+    aria-controls="navbarSupportedContent" 
+    aria-expanded="false" 
+    aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+    </button> -->
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="nav navbar-nav ml-auto" *ngIf="isAccounting && isAdmin">
+      
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/accounting/sales" >المبيعات</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/accounting/expenses" >المصروفات</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/accounting/returns" >المرتجعات</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/accounting/long-terms-invoices" >فواتير الاجل</a>
+        </li>
+        
+        
+        
+
+      </ul>
+      <ul class="nav navbar-nav ml-auto" *ngIf="isReports && isAdmin">
+      
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/reports/products" >المنتجات</a>
+        </li>
+                
+        <li class="nav-item mx-3">
+          <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/reports/supply-names" >التصنيفات</a>
+        </li>
+
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/reports/supply-types" >الاجزاء</a>
+        </li>
+        
+        
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/reports/car-brands" >السيارات</a>
+        </li>
+
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/reports/car-models" >الموديلات</a>
+        </li>
+        
+        
+
+      </ul>
+      <ul class="nav navbar-nav ml-auto" *ngIf="isEntriesManagement && isAdmin" style="max-width: 480px;">
+      
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/system/entries-management/manfacturer-countries" >بلاد المنشأ  للسيارة</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/system/entries-management/car-brands" >انواع السيارات</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/system/entries-management/car-models" >الموديلات</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/system/entries-management/release-years" >سنوات الاصدار</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/system/entries-management/supply-types" >اجزاء السيارة</a>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link nav-link-main" routerLinkActive="active" routerLink="/system/entries-management/supply-names" >التصنيفات</a>
+        </li>
+        
+        
+        
+
+      </ul>
+      <ul class="nav navbar-nav mr-auto">
+      
+        <li class="nav-item mx-3">
+          <p-dropdown styleClass="storage-selection" [(ngModel)]="selectedStorage" 
+          [options]="storages" placeholder="اختر مخزن" optionLabel="storageName" 
+           (onChange)="onChangeStorage($event)"></p-dropdown>
+        </li>
+        <li class="nav-item mx-3">
+            <a class="nav-link" href="javascript:;" (click)="logOut()">تسجيل <br>
+              الخروج</a>
+        </li>
+        
+
+      </ul>
+    </div>
+  </div>
+</nav>

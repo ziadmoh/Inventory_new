@@ -1,0 +1,120 @@
+<nav class="sidebar-admin" id="sidebar" [class]="isExpanded()? '' :'active' ">
+  <h1><a routerLink="/system" class="admin-logo text-center">
+      <img src="assets/img/logo1.png" [ngClass]="{'logo-img-lg': isExpanded() ==
+        true,'logo-img-sm': isExpanded() == false}">
+    </a>
+    <!-- <div class="clearfix" ></div> -->
+  </h1>
+  <div class="list-container">
+    <ul class="list-unstyled components m-0 px-3">
+      <li routerLinkActive="active" 
+        pTooltip="بيع و شراء " tooltipPosition="left">
+        <a routerLink="/system/inventory" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-cart-shopping"></i>{{ isExpanded()? " بيع و شراء ":
+          '' }} </a>
+        <div class="clearfix"></div>
+      </li>
+      <li routerLinkActive="active" 
+        pTooltip="النواقص" tooltipPosition="left">
+        <a routerLink="/system/shortages" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-circle-minus"></i>{{ isExpanded()? " النواقص ":
+          '' }} </a>
+        <div class="clearfix"></div>
+      </li>
+      <li routerLinkActive="active" 
+        pTooltip="ارجاع فواتير " tooltipPosition="left">
+        <a routerLink="/system/items-to-return" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-retweet"></i>{{ isExpanded()? " ارجاع فواتير ":
+          '' }} </a>
+        <div class="clearfix"></div>
+      </li>
+      <li routerLinkActive="active" 
+        pTooltip=" الشغل الاجل " tooltipPosition="left">
+        <a routerLink="/system/long-term-work" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-business-time"></i>{{ isExpanded()? " الشغل الاجل ":
+          '' }} 
+          </a>
+        <div class="clearfix"></div>
+      </li>
+    </ul>
+    <ul class="list-unstyled components mb-5 px-3" *ngIf="isAdmin">
+
+      <li routerLinkActive="active"  pTooltip="التقارير"
+        tooltipPosition="left">
+        <a routerLink="/reports" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-file-excel"></i>{{ isExpanded()? " التقارير ":
+          '' }} </a>
+        <div class="clearfix"></div>
+      </li>
+
+      <li routerLinkActive="active"  pTooltip="الحسابات"
+        tooltipPosition="left">
+        <a routerLink="/accounting" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-coins"></i>{{ isExpanded()? " الحسابات ":
+          '' }} </a>
+        <div class="clearfix"></div>
+      </li>
+      
+      <li routerLinkActive="active" 
+        pTooltip=" المخازن " tooltipPosition="left">
+        <a routerLink="/system/storages" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-warehouse"></i>{{ isExpanded()? " المخازن ":
+          '' }} 
+          </a>
+        <div class="clearfix"></div>
+      </li>
+      <li routerLinkActive="active" 
+        pTooltip=" الموردين " tooltipPosition="left">
+        <a routerLink="/system/suppliers" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-users-gear"></i>{{ isExpanded()? " الموردين ":
+          '' }} 
+          </a>
+        <div class="clearfix"></div>
+      </li>
+      <li routerLinkActive="active" 
+        pTooltip=" الشركات " tooltipPosition="left">
+        <a routerLink="/system/companies" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-building"></i>{{ isExpanded()? " الشركات ":
+          '' }} 
+          </a>
+        <div class="clearfix"></div>
+      </li>
+      
+      <li routerLinkActive="active" 
+        pTooltip="المستخدمين" tooltipPosition="left">
+        <a routerLink="/system/users" class="aside-link px-3" [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class="fa-solid fa-users-between-lines"></i>{{ isExpanded()? " المستخدمين ":
+          '' }} </a>
+        <div class="clearfix"></div>
+      </li>
+      <li routerLinkActive="active" 
+        pTooltip=" ادارة المدخلات " tooltipPosition="left">
+        <a routerLink="/system/entries-management" class="aside-link px-3 " [ngClass]="{'floating-li': isExpanded() ==
+          true}"><i class=" fa-solid fa-globe "></i> {{ isExpanded()? " ادارة
+          المدخلات ": '' }} </a>
+        <div class="clearfix"></div>
+      </li>
+      <!-- <li routerLinkActive="active" routerLink="/system/car-brands" pTooltip="انواع السيارات" tooltipPosition="left">
+            <a class="aside-link  px-3" [ngClass]="{'floating-li': isExpanded() == true}"><img src="assets/img/car-type.png" style="width: 20px;" class=" "> {{ isExpanded()? " انواع السيارات": '' }} </a>
+            <div class="clearfix" ></div>
+          </li>
+          <li routerLinkActive="active" routerLink="/system/car-models" pTooltip="الموديلات" tooltipPosition="left">
+              <a class="aside-link  px-3" [ngClass]="{'floating-li': isExpanded() == true}"><i class="  fa-solid fa-car-side  "></i> {{ isExpanded()? " الموديلات": '' }} </a>
+              <div class="clearfix" ></div>
+          </li>
+          <li routerLinkActive="active" routerLink="/system/release-years" pTooltip="سنوات الاصدار" tooltipPosition="left">
+              <a class="aside-link  px-3" [ngClass]="{'floating-li': isExpanded() == true}"><i class="  fa-solid fa-calendar-days"></i> {{ isExpanded()? " سنوات الاصدار": '' }} </a>
+              <div class="clearfix" ></div>
+          </li>
+          <li routerLinkActive="active" routerLink="/system/supply-types" pTooltip="اجزاء السيارة" tooltipPosition="left">
+              <a class="aside-link  px-3" [ngClass]="{'floating-li': isExpanded() == true}"><i class="  fa-solid fa-truck-monster"></i>{{ isExpanded()? " اجزاء السيارة ": '' }} </a>
+              <div class="clearfix" ></div>
+          </li>
+          <li routerLinkActive="active" routerLink="/system/supply-names" pTooltip="التصنيفات" tooltipPosition="left">
+                <a class="aside-link  px-3" [ngClass]="{'floating-li': isExpanded() == true}"><i class="  fa-solid fa-chair"></i>{{ isExpanded()? "التصنيفات": '' }} </a>
+                <div class="clearfix" ></div>
+          </li> -->
+    </ul>
+  </div>
+
+</nav>

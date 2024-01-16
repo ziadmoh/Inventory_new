@@ -1,0 +1,53 @@
+.inv-container{
+    width: 550px;
+    position: fixed;
+    left: 10px;
+    bottom: 5px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-family: "Tajawal", sans-serif;
+    .inv-header{
+        background-color: #00336B;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        cursor: pointer;
+        h5{
+            font-family: "Tajawal", sans-serif;
+            font-size: 16px;
+            color: #fff;
+            width: 100%;
+            text-align: right;
+        }
+    }
+    .inv-body{
+        background-color: #fff;
+        font-family: "Tajawal", sans-serif;
+        hr{
+            background-color: #000;
+        }
+        h5{
+            font-family: "Tajawal", sans-serif;
+        }
+    }
+    .inv-items{
+        height: 200px;
+        overflow: auto;
+    }
+    .inv-footer{
+        font-family: "Tajawal", sans-serif;
+    }
+    .invoice-head-cell{
+        background-color: #fcfaa1 !important;
+    }
+}
+.btn{
+    font-family: "Tajawal", sans-serif;
+}
+.rmv-icon{
+    cursor: pointer;
+}
+
+::ng-deep{
+    
+}
